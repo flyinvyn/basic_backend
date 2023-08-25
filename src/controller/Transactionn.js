@@ -9,7 +9,7 @@ const {
   findId,
 } = require("../models/Transactionn");
 const commonHelper = require("../helper/common");
-const client = require("../config/redis")
+// const client = require("../config/redis")
 
 let transactionController = {
   getAllTransaction: async (req, res) => {
@@ -46,7 +46,7 @@ let transactionController = {
     const id_transaction = Number(req.params.id);
     selectTransaction(id_transaction)
       .then((result) => {
-        client.setEx(`transaction/${id_transaction}`,60*60,JSON.stringify(result.rows))
+        // client.setEx(`transaction/${id_transaction}`,60*60,JSON.stringify(result.rows))
         commonHelper.response(res, result.rows, 200, "get data success from database")
       })
       .catch((err) => res.send(err));

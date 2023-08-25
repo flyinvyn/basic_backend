@@ -9,7 +9,7 @@ const {
   findId,
 } = require("../models/Category");
 const commonHelper = require("../helper/common");
-const client = require("../config/redis")
+// const client = require("../config/redis")
 
 let categoryController = {
   getAllCategory: async (req, res) => {
@@ -46,7 +46,7 @@ let categoryController = {
     const id = Number(req.params.id);
     selectCategory(id)
       .then((result) => {
-        client.setEx(`category/${id}`,60*60,JSON.stringify(result.rows))
+        // client.setEx(`category/${id}`,60*60,JSON.stringify(result.rows))
         commonHelper.response(res, result.rows, 200, "get data success from database")
       })
       .catch((err) => res.send(err));

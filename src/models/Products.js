@@ -7,7 +7,7 @@ const selectAllProduct = ({limit, offset, sortby, sort}) => {
 };
 
 const selectProduct = (id_product) => {
-  return Pool.query(`SELECT * FROM product WHERE id_product = ${id_product}`);
+  return Pool.query(`SELECT * FROM product WHERE id_product = '${id_product}'`);
 };
 
 const insertProduct = (data) => {
@@ -28,7 +28,7 @@ const insertProduct = (data) => {
         price,
         image_product,
         rate,
-        shop_name) VALUES(${id_product},'${name_product}',${stock},${price},'${image_product}',${rate},'${shop_name}')`
+        shop_name) VALUES('${id_product}','${name_product}',${stock},${price},'${image_product}',${rate},'${shop_name}')`
   );
 };
 
@@ -43,12 +43,12 @@ const updateProduct = (data) => {
     shop_name,
   } = data;
   return Pool.query(
-    `UPDATE product SET name_product='${name_product}', stock=${stock}, price=${price}, image_product='${image_product}',rate=${rate},shop_name='${shop_name}' WHERE id_product=${id_product}`
+    `UPDATE product SET name_product='${name_product}', stock=${stock}, price=${price}, image_product='${image_product}',rate=${rate},shop_name='${shop_name}' WHERE id_product='${id_product}'`
   );
 };
 
 const deleteProduct = (id_product) => {
-  return Pool.query(`DELETE FROM product WHERE id_product=${id_product}`);
+  return Pool.query(`DELETE FROM product WHERE id_product='${id_product}'`);
 };
 
 const countProduct = () => {
@@ -58,7 +58,7 @@ const countProduct = () => {
 const findId = (id_product) => {
   return new Promise((resolve, reject) =>
     Pool.query(
-      `SELECT id_product FROM product WHERE id_product=${id_product}`,
+      `SELECT id_product FROM product WHERE id_product='${id_product}'`,
       (error, result) => {
         if (!error) {
           resolve(result);

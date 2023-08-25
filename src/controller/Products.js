@@ -9,7 +9,9 @@ const {
   searchProduct,
 } = require("../models/Products");
 const commonHelper = require("../helper/common");
-const client = require("../config/redis")
+const { v4: uuidv4 } = require("uuid");
+const cloudinary = require("../middleware/cloudinary");
+// const client = require("../config/redis")
 
 let productController = {
   getAllProduct: async (req, res) => {
@@ -44,27 +46,28 @@ let productController = {
   },
 
   getDetailProduct: (req, res) => {
-    const id = Number(req.params.id);
-    selectProduct(id)
+    const id_product = String(req.params.id);
+    selectProduct(id_product)
       .then((result) => {
-        client.setEx(`product/${id}`,60*60,JSON.stringify(result.rows))
+        // client.setEx(`product/${id}`,60*60,JSON.stringify(result.rows))
         commonHelper.response(res, result.rows, 200, "get data success from database")
       })
       .catch((err) => res.send(err));
   },
   createProduct: async (req, res) => {
-    const PORT = process.env.PORT || 5000;
-    const DB_HOST = process.env.DB_HOST || "localhost";
-    const image_product = req.file.filename;
     const { name_product, price, stock, rate, shop_name } = req.body;
-    const {rows: [count]} = await countProduct();
-    const id_product = Number(count.count) + 1;
+    const id_product = uuidv4()
+    let image_product = null;
+    if (req.file) {
+      const result = await cloudinary.uploader.upload(req.file.path);
+      image_product = result.secure_url;
+    }
     const data = {
       id_product,
       name_product,
       price,
       stock,
-      image_product: `http://${DB_HOST}:${PORT}/img/${image_product}`,
+      image_product,
       rate,
       shop_name,
     };
@@ -76,22 +79,24 @@ let productController = {
   },
   updateProduct: async (req, res) => {
     try {
-      const PORT = process.env.PORT || 5000;
-      const DB_HOST = process.env.DB_HOST || "localhost";
-      const image_product = req.file.filename;
-      const id_product = Number(req.params.id)
+      const id_product = String(req.params.id)
       const { name_product, price, stock, rate, shop_name } =
         req.body;
       const { rowCount } = await findId(id_product);
       if (!rowCount) {
         res.json({ message: "ID is Not Found" });
       }
+      let image_product = null;
+    if (req.file) {
+      const result = await cloudinary.uploader.upload(req.file.path);
+      image_product = result.secure_url;
+    }
       const data = {
         id_product,
         name_product,
         price,
         stock,
-        image_product: `http://${DB_HOST}:${PORT}/img/${image_product}`,
+        image_product,
         rate,
         shop_name,
       };
@@ -106,7 +111,7 @@ let productController = {
   },
   deleteProduct: async (req, res) => {
     try {
-      const id_product = Number(req.params.id);
+      const id_product = String(req.params.id);
       const { rowCount } = await findId(id_product);
       if (!rowCount) {
         res.json({ message: "ID is Not Found" });

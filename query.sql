@@ -8,7 +8,7 @@ CREATE TABLE category (
 );
 
 CREATE TABLE product (
-    id_product SERIAL NOT NULL,
+    id_product VARCHAR NOT NULL,
     name_product VARCHAR(255),
     price INT,
     stock INT,
